@@ -27,15 +27,15 @@ func (ac *CompanyController) ListCompanys(c *gin.Context) {
     results := []models.Company{}
     err := ac.DB.Find(&results)
 
-    if err != nil {
-        logcompany.Debugf("Error when looking up companyList, the error is '%v'", err)
-        res := gin.H{
-                "status": "404",
-                "error": "No company found",
-        }
-        c.JSON(404, res)
-        return
-    }
+    // if err != nil {
+    //     logcompany.Debugf("Error when looking up companyList, the error is '%v'", err)
+    //     res := gin.H{
+    //             "status": "404",
+    //             "error": "No company found",
+    //     }
+    //     c.JSON(404, res)
+    //     return
+    // }
     content := gin.H {
             "status": "200",
             "result": "Success",
