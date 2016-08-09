@@ -6,7 +6,6 @@ import (
   //v "github.com/spf13/viper"
   "github.com/jinzhu/gorm"
   "log"
-  
   "../models"
 )
 

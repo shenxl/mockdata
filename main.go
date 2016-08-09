@@ -1,16 +1,36 @@
 package main
 
 import (
-  "./companydata/restapi.go"
-  "github.com/gin-gonic/gin"
+	// Standard library packages
+
+	// Third party packages
+	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
+
+	//"os"
+	"./controllers"
 )
 
 func main() {
-	r := gin.Default()
 
-	companydata.Companys = r.Group("/api/companys")
-  companydata.Company = r.Group("/api/company")
-	companydata.AddRoutes()
+	// Get DBController instance
+	dc := controllers.DBController{}
+	dc.InitDB()
+  dc.InitSchema()
 
-	r.Run(":8888")
+	// Get a TodolistController instance
+	companyCtl := controllers.CompanyController{}
+	companyCtl.SetDB(dc.GetDB())
+
+	// Get a todolist resource
+	router := gin.Default()
+
+	router.GET("/companys", companyCtl.ListCompanys)
+  router.GET("/company/:id", companyCtl.GetCompany)
+  router.DELETE("/users/:id", companyCtl.DeleteCompany)
+  router.POST("/users", companyCtl.CreateCompany)
+  router.PUT("/users/:id", companyCtl.UpdateCompany)
+
+
+  router.Run(":8888")
 }
