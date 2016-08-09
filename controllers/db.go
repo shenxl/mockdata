@@ -28,6 +28,5 @@ func (dc *DBController) GetDB() *gorm.DB {
 }
 
 func (dc *DBController) InitSchema(){
-
   dc.DB.AutoMigrate(&models.Company{})
 }

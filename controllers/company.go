@@ -49,7 +49,6 @@ func (ac *CompanyController) ListCompanys(c *gin.Context) {
 func (ac *CompanyController) GetCompany(c *gin.Context) {
     // Grab id
     id := c.Params.ByName("id")
-
     company := models.Company{}
     err := ac.DB.Where("id=?", id).Find(&company)
 
@@ -144,7 +143,7 @@ func (ac *CompanyController) DeleteCompany(c *gin.Context) {
 
     err := ac.DB.Where("id = ?", id).Delete(&company)
     if err != nil {
-        loguser.Debugf("Error while deleting a user, the error is '%v'", err)
+        logcompany.Debugf("Error while deleting a user, the error is '%v'", err)
         res := gin.H{
                 "status": "403",
                 "error": "Unable to delete user",
