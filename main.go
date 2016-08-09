@@ -21,10 +21,10 @@ func main() {
 	router := gin.Default()
 
 	router.GET("/companys", companyCtl.ListCompanys)
+  router.POST("/company", companyCtl.CreateCompany)
   router.GET("/company/:id", companyCtl.GetCompany)
-  router.DELETE("/users/:id", companyCtl.DeleteCompany)
-  router.POST("/users", companyCtl.CreateCompany)
-  router.PUT("/users/:id", companyCtl.UpdateCompany)
+  router.DELETE("/company/:id", companyCtl.DeleteCompany)
+  router.PUT("/company/:id", companyCtl.UpdateCompany)
 
   router.Run(":8888")
 }
