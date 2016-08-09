@@ -28,7 +28,7 @@ func (ac *CompanyController) ListCompanys(c *gin.Context) {
     err := ac.DB.Find(&results)
 
     if err != nil {
-        logcompany.Debugf("Error when looking up companyList, the error is '%v'", err)
+        logcompany.Debugf("Error when looking up companyList, the error is '%v'", err.GetErrors())
         res := gin.H{
                 "status": "404",
                 "error": "No company found",
