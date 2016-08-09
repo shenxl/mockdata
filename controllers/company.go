@@ -6,6 +6,7 @@ import (
     "github.com/gin-gonic/gin"
     "github.com/jinzhu/gorm"
   _ "github.com/go-sql-driver/mysql"
+
     "../models"
 )
 
@@ -91,7 +92,7 @@ func (ac *CompanyController) CreateCompany(c *gin.Context) {
   content := gin.H{
     "status": "201",
     "result": "Success",
-    "CompanyId": company.id,
+    // "CompanyId": company.id,
   }
 
   c.Writer.Header().Set("Content-Type", "application/json")
@@ -100,16 +101,11 @@ func (ac *CompanyController) CreateCompany(c *gin.Context) {
 
 
 func (ac *CompanyController) UpdateCompany(c *gin.Context) {
-    // Grab id
+  // Grab id
   id := c.Params.ByName("id")
   var company models.Company
 
   c.Bind(&company)
-
-    // Update Timestamps
-    //user.UpdateDate = time.Now().String()
-
-    //err := ac.DB.Model(&models.auth_User).Where("user_id = ?", id).Updates(&cm)
     err := ac.DB.Where("id = ?", id).Updates(&company)
     if err != nil {
         logcompany.Debugf("Error while updating a company, the error is '%v'", err)
@@ -124,7 +120,7 @@ func (ac *CompanyController) UpdateCompany(c *gin.Context) {
     content := gin.H{
             "status": "201",
             "result": "Success",
-            "CompanyID": company.id,
+            // "CompanyID": company.id,
         }
 
     c.Writer.Header().Set("Content-Type", "application/json")
@@ -154,7 +150,7 @@ func (ac *CompanyController) DeleteCompany(c *gin.Context) {
 
     content := gin.H {
             "result": "Success",
-            "CompanyID": company.id,
+            // "CompanyID": company.id,
         }
 
   c.Writer.Header().Set("Content-Type", "application/json")
