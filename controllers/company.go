@@ -34,7 +34,7 @@ func (ac *CompanyController) ListCompanys(c *gin.Context) {
                 "error": "No company found",
         }
         c.JSON(404, res)
-        // return
+        return
     }
     content := gin.H {
             "status": "200",

@@ -1,13 +1,13 @@
 package models
 
 type Company struct {
-	ID   int64
-	Company string
-  Sn string
-  // region string `json:"region"`
-  // industry string `json:"industry"`
+	Id   int64  `json:"id"`
+	Company string `json:"company"`
+  Group string `json:"group"`
+  Region string `json:"region"`
+  Industry string `json:"industry"`
 }
 
 func (Company) TableName() string {
-  return "company_sn"
+  return "company"
 }
