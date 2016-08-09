@@ -8,3 +8,7 @@ type Company struct {
   region string `json:"region"`
   industry string `json:"industry"`
 }
+
+func (Company) TableName() string {
+  return "company"
+}
