@@ -1,7 +1,7 @@
 package main
 
 import (
-  "./companydata/restapi"
+  "./companydata/restapi.go"
   "github.com/gin-gonic/gin"
 )
 
