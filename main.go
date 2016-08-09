@@ -1,19 +1,14 @@
 package main
 
 import (
-	// Standard library packages
-
-	// Third party packages
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
-
-	//"os"
-	"./controllers"
+	"github.com/shenxl/mockdata/controllers"
 )
 
 func main() {
 
-	// Get DBController instance
+	// Get DBController
 	dc := controllers.DBController{}
 	dc.InitDB()
   dc.InitSchema()
@@ -30,7 +25,6 @@ func main() {
   router.DELETE("/users/:id", companyCtl.DeleteCompany)
   router.POST("/users", companyCtl.CreateCompany)
   router.PUT("/users/:id", companyCtl.UpdateCompany)
-
 
   router.Run(":8888")
 }

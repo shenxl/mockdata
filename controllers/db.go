@@ -3,10 +3,10 @@ package controllers
 import (
 
   _ "github.com/go-sql-driver/mysql"
-  //v "github.com/spf13/viper"
   "github.com/jinzhu/gorm"
   "log"
-  "../models"
+
+  "github.com/shenxl/mockdata/models"
 )
 
 type DBController struct {

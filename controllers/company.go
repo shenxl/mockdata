@@ -3,11 +3,11 @@ package controllers
 import (
 
   "github.com/op/go-logging"
-    "github.com/gin-gonic/gin"
-    "github.com/jinzhu/gorm"
+  "github.com/gin-gonic/gin"
+  "github.com/jinzhu/gorm"
   _ "github.com/go-sql-driver/mysql"
 
-    "../models"
+  "github.com/shenxl/mockdata/models"
 )
 
 var logcompany = logging.MustGetLogger("Companys")
