@@ -25,7 +25,7 @@ func (ac *CompanyController) SetDB(d *gorm.DB) {
 func (ac *CompanyController) ListCompanys(c *gin.Context) {
 
     results := []models.Company{}
-    err := ac.DB.Find(&results)
+    err := ac.DB.Find(&results).Error
 
     if err != nil {
         logcompany.Debugf("Error when looking up companyList, the error is '%v'", err)
@@ -51,7 +51,7 @@ func (ac *CompanyController) GetCompany(c *gin.Context) {
     // Grab id
     id := c.Params.ByName("id")
     company := models.Company{}
-    err := ac.DB.Where("id=?", id).Find(&company)
+    err := ac.DB.Where("id=?", id).Find(&company).Error
 
     if err != nil {
         logcompany.Debugf("Error when looking up company, the error is '%v'", err)
@@ -78,7 +78,7 @@ func (ac *CompanyController) CreateCompany(c *gin.Context) {
   var company models.Company
   c.Bind(&company)
 
-  err := ac.DB.Save(&company)
+  err := ac.DB.Save(&company).Error
   if err != nil {
     logcompany.Debugf("Error while creating a company, the error is '%v'", err)
     res := gin.H{
@@ -106,7 +106,7 @@ func (ac *CompanyController) UpdateCompany(c *gin.Context) {
   var company models.Company
 
   c.Bind(&company)
-    err := ac.DB.Where("id = ?", id).Updates(&company)
+    err := ac.DB.Where("id = ?", id).Updates(&company).Error
     if err != nil {
         logcompany.Debugf("Error while updating a company, the error is '%v'", err)
         res := gin.H{
@@ -137,7 +137,7 @@ func (ac *CompanyController) DeleteCompany(c *gin.Context) {
     // Update Timestamps
     //user.UpdateDate = time.Now().String()
 
-    err := ac.DB.Where("id = ?", id).Delete(&company)
+    err := ac.DB.Where("id = ?", id).Delete(&company).Error
     if err != nil {
         logcompany.Debugf("Error while deleting a user, the error is '%v'", err)
         res := gin.H{
