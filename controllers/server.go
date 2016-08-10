@@ -8,27 +8,27 @@ import (
 	"github.com/shenxl/mockdata/models"
 )
 
-var logcompany = logging.MustGetLogger("Companys")
+var logserver = logging.MustGetLogger("Server")
 
-type CompanyController struct {
+type ServerController struct {
 	DB *gorm.DB
 }
 
-func (ac *CompanyController) SetDB(d *gorm.DB) {
+func (ac *ServerController) SetDB(d *gorm.DB) {
 	ac.DB = d
 	ac.DB.LogMode(true)
 }
 
-func (ac *CompanyController) List(c *gin.Context) {
+func (ac *ServerController) List(c *gin.Context) {
 
-	results := []models.Company{}
+	results := []models.Server{}
 	err := ac.DB.Find(&results).Error
 
 	if err != nil {
-		logcompany.Debugf("Error when looking up companyList, the error is '%v'", err)
+		logserver.Debugf("Error when looking up servers, the error is '%v'", err)
 		res := gin.H{
 			"status": "404",
-			"error":  "No company found",
+			"error":  "No server list found",
 		}
 		c.JSON(404, res)
 		return
@@ -44,43 +44,17 @@ func (ac *CompanyController) List(c *gin.Context) {
 }
 
 // Get a company
-func (ac *CompanyController) GetCompany(c *gin.Context) {
+func (ac *ServerController) GetServer(c *gin.Context) {
 	// Grab id
 	id := c.Params.ByName("id")
-	company := models.Company{}
-	err := ac.DB.Where("id=?", id).Find(&company).Error
+	entity := models.Server{}
+	err := ac.DB.Where("id=?", id).Find(&entity).Error
 
 	if err != nil {
-		logcompany.Debugf("Error when looking up company, the error is '%v'", err)
+		logserver.Debugf("Error when looking up server, the error is '%v'", err)
 		res := gin.H{
 			"status": "404",
-			"error":  "User not found",
-		}
-		c.JSON(404, res)
-		return
-	}
-
-	content := gin.H{
-		"status":  "201",
-		"result":  "Success",
-		"company": company,
-	}
-
-	c.Writer.Header().Set("Content-Type", "application/json")
-	c.JSON(200, content)
-}
-
-// Create a company
-func (ac *CompanyController) Create(c *gin.Context) {
-	var company models.Company
-	c.BindJSON(&company)
-
-	err := ac.DB.Save(&company).Error
-	if err != nil {
-		logcompany.Debugf("Error while creating a company, the error is '%v'", err)
-		res := gin.H{
-			"status": "403",
-			"error":  "Unable to create company",
+			"error":  "server not found",
 		}
 		c.JSON(404, res)
 		return
@@ -89,64 +63,90 @@ func (ac *CompanyController) Create(c *gin.Context) {
 	content := gin.H{
 		"status": "201",
 		"result": "Success",
-		// "CompanyId": company.id,
+		"server": entity,
+	}
+
+	c.Writer.Header().Set("Content-Type", "application/json")
+	c.JSON(200, content)
+}
+
+// Create a company
+func (ac *ServerController) Create(c *gin.Context) {
+	var entity models.Server
+	c.BindJSON(&entity)
+	err := ac.DB.Save(&entity).Error
+
+	if err != nil {
+		logserver.Debugf("Error while creating a server, the error is '%v'", err)
+		res := gin.H{
+			"status": "403",
+			"error":  "Unable to create server",
+		}
+		c.JSON(404, res)
+		return
+	}
+
+	content := gin.H{
+		"status":   "201",
+		"result":   "Success",
+		"serverid": entity.Id,
 	}
 
 	c.Writer.Header().Set("Content-Type", "application/json")
 	c.JSON(201, content)
 }
 
-func (ac *CompanyController) Update(c *gin.Context) {
+func (ac *ServerController) Update(c *gin.Context) {
 	// Grab id
 	id := c.Params.ByName("id")
-	var entity models.Company
+	var entity models.Server
 
 	c.BindJSON(&entity)
 	err := ac.DB.Model(&entity).Where("id = ?", id).Updates(&entity).Error
 	if err != nil {
-		logcompany.Debugf("Error while updating a company, the error is '%v'", err)
+		logserver.Debugf("Error while updating a server, the error is '%v'", err)
 		res := gin.H{
 			"status": "403",
-			"error":  "Unable to update company",
+			"error":  "Unable to update server",
 		}
 		c.JSON(403, res)
 		return
 	}
 
 	content := gin.H{
-		"status":    "201",
-		"result":    "Success",
-		"CompanyID": id,
+		"status":   "201",
+		"result":   "Success",
+		"serverid": id,
 	}
 
 	c.Writer.Header().Set("Content-Type", "application/json")
 	c.JSON(201, content)
 }
 
-func (ac *CompanyController) Delete(c *gin.Context) {
+func (ac *ServerController) Delete(c *gin.Context) {
 	// Grab id
 	id := c.Params.ByName("id")
-	var company models.Company
+	var entity models.Server
 
-	c.BindJSON(&company)
+	c.BindJSON(&entity)
 
 	// Update Timestamps
 	//user.UpdateDate = time.Now().String()
 
-	err := ac.DB.Where("id = ?", id).Delete(&company).Error
+	err := ac.DB.Where("id = ?", id).Delete(&entity).Error
 	if err != nil {
-		logcompany.Debugf("Error while deleting a company, the error is '%v'", err)
+		logserver.Debugf("Error while deleting a server, the error is '%v'", err)
 		res := gin.H{
 			"status": "403",
-			"error":  "Unable to delete company",
+			"error":  "Unable to delete server",
 		}
 		c.JSON(403, res)
 		return
 	}
 
 	content := gin.H{
-		"result":    "Success",
-		"CompanyID": id,
+		"result":   "Success",
+		"serverid": id,
 	}
 
 	c.Writer.Header().Set("Content-Type", "application/json")

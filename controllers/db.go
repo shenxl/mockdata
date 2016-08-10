@@ -1,12 +1,11 @@
 package controllers
 
 import (
+	"log"
 
-  _ "github.com/go-sql-driver/mysql"
-  "github.com/jinzhu/gorm"
-  "log"
-
-  "github.com/shenxl/mockdata/models"
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/jinzhu/gorm"
+	"github.com/shenxl/mockdata/models"
 )
 
 type DBController struct {
@@ -16,7 +15,7 @@ type DBController struct {
 func (dc *DBController) InitDB() {
 	var err error
 
-  dc.DB, err = gorm.Open("mysql","root:kingsoft@/mockdata?charset=utf8&parseTime=True")
+	dc.DB, err = gorm.Open("mysql", "shen:kingsoft@tcp(192.168.132.105:3306)/mockdata?charset=utf8&parseTime=True")
 	if err != nil {
 		log.Fatalf("Error when connect database, the error is '%v'", err)
 	}
@@ -24,9 +23,9 @@ func (dc *DBController) InitDB() {
 }
 
 func (dc *DBController) GetDB() *gorm.DB {
-  return dc.DB
+	return dc.DB
 }
 
-func (dc *DBController) InitSchema(){
-  dc.DB.AutoMigrate(&models.Company{})
+func (dc *DBController) InitSchema() {
+	dc.DB.AutoMigrate(&models.Company{}, &models.CompanySn{}, &models.Server{})
 }
