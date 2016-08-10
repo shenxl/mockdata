@@ -76,7 +76,7 @@ func (ac *CompanyController) GetCompany(c *gin.Context) {
 // Create a company
 func (ac *CompanyController) CreateCompany(c *gin.Context) {
   var company models.Company
-  c.Bind(&company)
+  c.BindJSON(&company)
 
   err := ac.DB.Save(&company).Error
   if err != nil {
@@ -105,7 +105,7 @@ func (ac *CompanyController) UpdateCompany(c *gin.Context) {
   id := c.Params.ByName("id")
   var company models.Company
 
-  c.Bind(&company)
+  c.BindJSON(&company)
     err := ac.DB.Where("id = ?", id).Updates(&company).Error
     if err != nil {
         logcompany.Debugf("Error while updating a company, the error is '%v'", err)
@@ -132,7 +132,7 @@ func (ac *CompanyController) DeleteCompany(c *gin.Context) {
   id := c.Params.ByName("id")
   var company models.Company
 
-  c.Bind(&company)
+  c.BindJSON(&company)
 
     // Update Timestamps
     //user.UpdateDate = time.Now().String()
