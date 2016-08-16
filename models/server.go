@@ -5,7 +5,7 @@ type Server struct {
 	Ip         string `json:"ip"`
 	Mac        string `json:"mac"`
 	Desciption string `json:"desciption"`
-	Company    int64  `json:"company"`
+	Company    int64  `json:"companyid"`
 }
 
 func (Server) TableName() string {

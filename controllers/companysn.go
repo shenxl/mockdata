@@ -34,9 +34,9 @@ func (ac *CompanySnController) List(c *gin.Context) {
 		return
 	}
 	content := gin.H{
-		"status":   "200",
-		"result":   "Success",
-		"companys": results,
+		"status":     "200",
+		"success":    true,
+		"companysns": results,
 	}
 
 	c.Writer.Header().Set("Content-Type", "application/json")
@@ -62,7 +62,7 @@ func (ac *CompanySnController) GetCompanySn(c *gin.Context) {
 
 	content := gin.H{
 		"status":    "201",
-		"result":    "Success",
+		"success":   true,
 		"CompanySn": entity,
 	}
 
@@ -87,7 +87,7 @@ func (ac *CompanySnController) Create(c *gin.Context) {
 
 	content := gin.H{
 		"status":      "201",
-		"result":      "Success",
+		"success":     true,
 		"CompanySnId": entity.Id,
 	}
 
@@ -101,7 +101,7 @@ func (ac *CompanySnController) Update(c *gin.Context) {
 	var entity models.CompanySn
 
 	c.BindJSON(&entity)
-	err := ac.DB.Model(&entity).Where("id = ?", id).Updates(&entity).Error
+	err := ac.DB.Table("company_sn").Where("id = ?", id).Updates(&entity).Error
 	if err != nil {
 		logcompanySn.Debugf("Error while updating a company_sn, the error is '%v'", err)
 		res := gin.H{
@@ -114,7 +114,7 @@ func (ac *CompanySnController) Update(c *gin.Context) {
 
 	content := gin.H{
 		"status":      "201",
-		"result":      "Success",
+		"success":     true,
 		"CompanySnID": id,
 	}
 
@@ -144,7 +144,7 @@ func (ac *CompanySnController) Delete(c *gin.Context) {
 	}
 
 	content := gin.H{
-		"result":      "Success",
+		"success":     true,
 		"CompanySnID": id,
 	}
 

@@ -1,0 +1,18 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	0	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+logserver	E:\coding\go\src\github.com\shenxl\mockdata\controllers\server.go	/^var logserver = logging.MustGetLogger("Server")$/;"	var	line:11
+ServerController	E:\coding\go\src\github.com\shenxl\mockdata\controllers\server.go	/^type ServerController struct {$/;"	type	line:13
+SetDB	E:\coding\go\src\github.com\shenxl\mockdata\controllers\server.go	/^func (ac *ServerController) SetDB(d *gorm.DB) {$/;"	func	line:17
+List	E:\coding\go\src\github.com\shenxl\mockdata\controllers\server.go	/^func (ac *ServerController) List(c *gin.Context) {$/;"	func	line:22
+ServerData	E:\coding\go\src\github.com\shenxl\mockdata\controllers\server.go	/^	type ServerData struct {$/;"	type	line:24
+GetServer	E:\coding\go\src\github.com\shenxl\mockdata\controllers\server.go	/^func (ac *ServerController) GetServer(c *gin.Context) {$/;"	func	line:56
+Create	E:\coding\go\src\github.com\shenxl\mockdata\controllers\server.go	/^func (ac *ServerController) Create(c *gin.Context) {$/;"	func	line:83
+entity	E:\coding\go\src\github.com\shenxl\mockdata\controllers\server.go	/^	var entity models.Server$/;"	var	line:84
+Update	E:\coding\go\src\github.com\shenxl\mockdata\controllers\server.go	/^func (ac *ServerController) Update(c *gin.Context) {$/;"	func	line:108
+entity	E:\coding\go\src\github.com\shenxl\mockdata\controllers\server.go	/^	var entity models.Server$/;"	var	line:111
+Delete	E:\coding\go\src\github.com\shenxl\mockdata\controllers\server.go	/^func (ac *ServerController) Delete(c *gin.Context) {$/;"	func	line:135
+entity	E:\coding\go\src\github.com\shenxl\mockdata\controllers\server.go	/^	var entity models.Server$/;"	var	line:138

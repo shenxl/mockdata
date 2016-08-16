@@ -21,8 +21,17 @@ func (ac *ServerController) SetDB(d *gorm.DB) {
 
 func (ac *ServerController) List(c *gin.Context) {
 
-	results := []models.Server{}
-	err := ac.DB.Find(&results).Error
+	type ServerData struct {
+		models.Server
+		models.Company
+	}
+
+	results := []ServerData{}
+
+	err := ac.DB.Table("server").
+		Select("server.* , company.*").
+		Joins("left join company on server.company = company.id ").
+		Scan(&results).Error
 
 	if err != nil {
 		logserver.Debugf("Error when looking up servers, the error is '%v'", err)
@@ -34,9 +43,9 @@ func (ac *ServerController) List(c *gin.Context) {
 		return
 	}
 	content := gin.H{
-		"status":   "200",
-		"result":   "Success",
-		"companys": results,
+		"status":  "200",
+		"success": true,
+		"servers": results,
 	}
 
 	c.Writer.Header().Set("Content-Type", "application/json")
@@ -61,9 +70,9 @@ func (ac *ServerController) GetServer(c *gin.Context) {
 	}
 
 	content := gin.H{
-		"status": "201",
-		"result": "Success",
-		"server": entity,
+		"status":  "201",
+		"success": true,
+		"server":  entity,
 	}
 
 	c.Writer.Header().Set("Content-Type", "application/json")
@@ -88,7 +97,7 @@ func (ac *ServerController) Create(c *gin.Context) {
 
 	content := gin.H{
 		"status":   "201",
-		"result":   "Success",
+		"success":  true,
 		"serverid": entity.Id,
 	}
 
@@ -102,7 +111,7 @@ func (ac *ServerController) Update(c *gin.Context) {
 	var entity models.Server
 
 	c.BindJSON(&entity)
-	err := ac.DB.Model(&entity).Where("id = ?", id).Updates(&entity).Error
+	err := ac.DB.Table("server").Where("id = ?", id).Updates(&entity).Error
 	if err != nil {
 		logserver.Debugf("Error while updating a server, the error is '%v'", err)
 		res := gin.H{
@@ -115,7 +124,7 @@ func (ac *ServerController) Update(c *gin.Context) {
 
 	content := gin.H{
 		"status":   "201",
-		"result":   "Success",
+		"success":  true,
 		"serverid": id,
 	}
 
@@ -145,7 +154,7 @@ func (ac *ServerController) Delete(c *gin.Context) {
 	}
 
 	content := gin.H{
-		"result":   "Success",
+		"success":  true,
 		"serverid": id,
 	}
 

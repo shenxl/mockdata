@@ -35,7 +35,7 @@ func (ac *CompanyMonthlyController) List(c *gin.Context) {
 	}
 	content := gin.H{
 		"status":             "200",
-		"result":             "Success",
+		"success":            true,
 		"companymonthlyList": results,
 	}
 
@@ -62,7 +62,7 @@ func (ac *CompanyMonthlyController) GetCompanyMonthly(c *gin.Context) {
 
 	content := gin.H{
 		"status":         "201",
-		"result":         "Success",
+		"success":        true,
 		"companymonthly": entity,
 	}
 

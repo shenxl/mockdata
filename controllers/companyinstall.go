@@ -35,7 +35,7 @@ func (ac *CompanyInstallController) List(c *gin.Context) {
 	}
 	content := gin.H{
 		"status":             "200",
-		"result":             "Success",
+		"success":            true,
 		"companyinstallList": results,
 	}
 
@@ -62,7 +62,7 @@ func (ac *CompanyInstallController) GetCompanyInstall(c *gin.Context) {
 
 	content := gin.H{
 		"status":         "201",
-		"result":         "Success",
+		"success":        true,
 		"companyinstall": entity,
 	}
 

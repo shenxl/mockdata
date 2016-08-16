@@ -35,7 +35,7 @@ func (ac *CompanyController) List(c *gin.Context) {
 	}
 	content := gin.H{
 		"status":   "200",
-		"result":   "Success",
+		"success":  true,
 		"companys": results,
 	}
 
@@ -62,7 +62,7 @@ func (ac *CompanyController) GetCompany(c *gin.Context) {
 
 	content := gin.H{
 		"status":  "201",
-		"result":  "Success",
+		"success": true,
 		"company": company,
 	}
 
@@ -87,13 +87,43 @@ func (ac *CompanyController) Create(c *gin.Context) {
 	}
 
 	content := gin.H{
-		"status": "201",
-		"result": "Success",
+		"status":  "201",
+		"success": true,
 		// "CompanyId": company.id,
 	}
 
 	c.Writer.Header().Set("Content-Type", "application/json")
 	c.JSON(201, content)
+}
+
+func (ac *CompanyController) GetIndustry(c *gin.Context) {
+	type IndustrysData struct {
+		Industry string `json:"industry"`
+	}
+
+	results := []IndustrysData{}
+	err := ac.DB.Table("company").
+		Select("industry as industry").
+		Group("industry").
+		Scan(&results).Error
+
+	if err != nil {
+		logcompany.Debugf("Error when looking up industry, the error is '%v'", err)
+		res := gin.H{
+			"status": "404",
+			"error":  "No industry found",
+		}
+		c.JSON(404, res)
+		return
+	}
+	content := gin.H{
+		"status":     "200",
+		"success":    true,
+		"industries": results,
+	}
+
+	c.Writer.Header().Set("Content-Type", "application/json")
+	c.JSON(200, content)
 }
 
 func (ac *CompanyController) Update(c *gin.Context) {
@@ -102,7 +132,7 @@ func (ac *CompanyController) Update(c *gin.Context) {
 	var entity models.Company
 
 	c.BindJSON(&entity)
-	err := ac.DB.Model(&entity).Where("id = ?", id).Updates(&entity).Error
+	err := ac.DB.Table("company").Where("id = ?", id).Updates(&entity).Error
 	if err != nil {
 		logcompany.Debugf("Error while updating a company, the error is '%v'", err)
 		res := gin.H{
@@ -115,7 +145,7 @@ func (ac *CompanyController) Update(c *gin.Context) {
 
 	content := gin.H{
 		"status":    "201",
-		"result":    "Success",
+		"success":   true,
 		"CompanyID": id,
 	}
 
@@ -145,7 +175,7 @@ func (ac *CompanyController) Delete(c *gin.Context) {
 	}
 
 	content := gin.H{
-		"result":    "Success",
+		"success":   true,
 		"CompanyID": id,
 	}
 

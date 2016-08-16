@@ -35,7 +35,7 @@ func (ac *CompanyDailyController) List(c *gin.Context) {
 	}
 	content := gin.H{
 		"status":           "200",
-		"result":           "Success",
+		"success":          true,
 		"companydailyList": results,
 	}
 
@@ -62,7 +62,7 @@ func (ac *CompanyDailyController) GetCompanyDaily(c *gin.Context) {
 
 	content := gin.H{
 		"status":       "201",
-		"result":       "Success",
+		"success":      true,
 		"companydaily": entity,
 	}
 
