@@ -36,6 +36,32 @@ func (ac *CompanyController) List(c *gin.Context) {
 	content := gin.H{
 		"status":   "200",
 		"success":  true,
+		"length":   len(results),
+		"companys": results,
+	}
+
+	c.Writer.Header().Set("Content-Type", "application/json")
+	c.JSON(200, content)
+}
+
+func (ac *CompanyController) GetListByIndustry(c *gin.Context) {
+
+	results := []models.Company{}
+	name := c.Params.ByName("name")
+	err := ac.DB.Where("industry = ?", name).Find(&results).Error
+	if err != nil {
+		logcompany.Debugf("Error when looking up companyList, the error is '%v'", err)
+		res := gin.H{
+			"status": "404",
+			"error":  "No company found",
+		}
+		c.JSON(404, res)
+		return
+	}
+	content := gin.H{
+		"status":   "200",
+		"success":  true,
+		"length":   len(results),
 		"companys": results,
 	}
 

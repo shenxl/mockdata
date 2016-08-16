@@ -58,10 +58,11 @@ func main() {
 	company := router.Group("/companys")
 	{
 		company.GET("/", companyCtl.List)
+		company.GET("/industries/:name", companyCtl.GetListByIndustry)
 		company.POST("/", companyCtl.Create)
-		company.GET("/:id", companyCtl.GetCompany)
-		company.DELETE("/:id", companyCtl.Delete)
-		company.PUT("/:id", companyCtl.Update)
+		company.GET("/company/:id", companyCtl.GetCompany)
+		company.DELETE("/company/:id", companyCtl.Delete)
+		company.PUT("/company/:id", companyCtl.Update)
 	}
 
 	companysn := router.Group("/company_sns")
