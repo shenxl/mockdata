@@ -1,10 +1,10 @@
 package models
 
 type CompanyInstall struct {
-	Id      int64 `json:"id"`
-	Company int64 `json:"company"`
-	Server  int64 `json:"server"`
-	Sum     int64 `json:"sum"`
+	Id        int64 `json:"id"`
+	CompanyId int64 `json:"companyid"`
+	ServerId  int64 `json:"serverid"`
+	Sum       int64 `json:"sum"`
 }
 
 func (CompanyInstall) TableName() string {

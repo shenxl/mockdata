@@ -47,10 +47,42 @@ func main() {
 	companyinstallCtl := controllers.CompanyInstallController{}
 	companyinstallCtl.SetDB(dc.GetDB())
 
+	installCtl := controllers.InstallController{}
+	installCtl.SetDB(dc.GetDB())
+
+	dataCtl := controllers.DataController{}
+	dataCtl.SetDB(dc.GetDB())
+
+	chartCtl := controllers.ChartController{}
+	chartCtl.SetDB(dc.GetDB())
+
 	router := gin.New()
 	router.Use(CORSMiddleware())
+
+	report := router.Group("/api/report")
+	{
+		report.GET("/mapdata/", chartCtl.MapData)
+		report.GET("/piedata/installbyindustry", chartCtl.InstallForIndustry)
+		report.GET("/piedata/buybyindustry", chartCtl.BuyForIndustry)
+		report.GET("/summarydata", chartCtl.SummaryForMonth)
+		report.GET("/linedata/", chartCtl.InstallForLine)
+		report.GET("/linedata/:id", chartCtl.InstallForLineByID)
+	}
+
+	data := router.Group("/api")
+	{
+		data.GET("/companys/", dataCtl.CompanyListByQuery)
+		data.GET("/groupDaily/:id", dataCtl.GroupDaily)
+		// groups.GET("/group_:gid/companies", companymonthCtl.GroupByQuery)
+		// groups.GET("/group_:gid/companies/company_:cid/sns", companymonthCtl.GroupByQuery)
+	}
+
+	install := router.Group("/install")
+	{
+		install.GET("/", installCtl.Install)
+	}
 	// Get a todolist resource
-	industry := router.Group("/industry")
+	industry := router.Group("/api/industry")
 	{
 		industry.GET("/", companyCtl.GetIndustry)
 	}
@@ -89,10 +121,11 @@ func main() {
 		companydaily.GET("/:id", companydailyCtl.GetCompanyDaily)
 	}
 
-	companymonthly := router.Group("/companymonthlys")
+	companymonthly := router.Group("/monthlydata")
 	{
 		companymonthly.GET("/", companymonthCtl.List)
-		companymonthly.GET("/:id", companymonthCtl.GetCompanyMonthly)
+		companymonthly.GET("/all/:year/:month", companymonthCtl.AllByHere)
+		// companymonthly.GET("/:id", companymonthCtl.GetCompanyMonthly)
 	}
 
 	companyinstall := router.Group("/companyinstalls")
@@ -100,6 +133,9 @@ func main() {
 		companyinstall.GET("/", companyinstallCtl.List)
 		companyinstall.GET("/:id", companyinstallCtl.GetCompanyInstall)
 	}
+
+	router.StaticFile("/font/iconfont.woff", "./iconfont/iconfont.woff")
+	router.StaticFile("/font/iconfont.ttf", "./iconfont/iconfont.ttf")
 
 	router.Run(":8888")
 }
