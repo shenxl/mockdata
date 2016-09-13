@@ -106,15 +106,15 @@ func (ac *ChartController) InstallForLineByID(c *gin.Context) {
 
 func (ac *ChartController) InstallForIndustry(c *gin.Context) {
 	type ResultData struct {
-		Industry string `json:"name"`
-		Sum      int64  `json:"value"`
+		Type string `json:"name"`
+		Sum  int64  `json:"value"`
 	}
 
 	results := []ResultData{}
 	rawSQL := `
-		select company.industry,sum(company_install.sum) as sum from company_install
+		select company.type,sum(company_install.sum) as sum from company_install
 		LEFT JOIN company on company.id = company_install.company_id
-		group by company.industry
+		group by company.type
 	`
 	err := ac.DB.Raw(rawSQL).Scan(&results).Error
 	if err != nil {
@@ -196,14 +196,14 @@ func (ac *ChartController) SummaryForMonth(c *gin.Context) {
 
 func (ac *ChartController) BuyForIndustry(c *gin.Context) {
 	type ResultData struct {
-		Industry       string `json:"name"`
+		Type           string `json:"name"`
 		PurchaseNumber int64  `json:"value"`
 	}
 
 	results := []ResultData{}
 	rawSQL := `
-		select industry,sum(purchase_number) as  purchase_number from company_group
-		GROUP BY industry
+		select type,sum(total) as  purchase_number from v_group_order
+		GROUP BY type
 	`
 	err := ac.DB.Raw(rawSQL).Scan(&results).Error
 	if err != nil {
@@ -235,7 +235,7 @@ func (ac *ChartController) MapData(c *gin.Context) {
 	}
 	results := []MapResult{}
 
-	err := ac.DB.Table("company").Select("province , sum(buy_number) as total").Group("province").
+	err := ac.DB.Table("v_company_order").Select("province , sum(total) as total").Group("province").
 		Order("total").Scan(&results).Error
 	if err != nil {
 		logcompanySn.Debugf("按地域查找购买量发生错误 '%v'", err)

@@ -22,7 +22,7 @@ func (ac *DataController) SetDB(d *gorm.DB) {
 	ac.DB.LogMode(true)
 }
 
-func (ac *DataController) GroupDaily(c *gin.Context) {
+func (ac *DataController) CompanyDaily(c *gin.Context) {
 	type ResultData struct {
 		GroupId     string `json:"group_id"`
 		Year        int    `json:"year"`
@@ -71,8 +71,10 @@ func (ac *DataController) CompanyListByQuery(c *gin.Context) {
 		Name         string  `json:"name"`
 		CompanyId    string  `json:"company_id"`
 		GroupId      string  `json:"group_id"`
+		Type         string  `json:"type"`
 		Industry     string  `json:"industry"`
-		BuyNumber    string  `json:"buy_number"`
+		Important    int     `json:"important"`
+		Total        string  `json:"buy_number"`
 		ServerID     string  `json:"server_id"`
 		Year         int     `json:"year"`
 		Month        int     `json:"month"`
@@ -104,38 +106,64 @@ func (ac *DataController) CompanyListByQuery(c *gin.Context) {
 	Datestr := fmt.Sprintf("%d,%d", year, mon)
 	startDate := c.DefaultQuery("startDate", Datestr)
 	// endDate := c.DefaultQuery("endDate", Datestr)
+
 	start := c.DefaultQuery("start", "0")
 	limit := c.DefaultQuery("limit", "5")
 
-	industry := c.DefaultQuery("industry", "all")
+	companyType := c.DefaultQuery("type", "all")
+
+	// industry := c.DefaultQuery("industry", "all")
 	// TODO: 根据排序
 	// orderBy := c.DefaultQuery("orderBy", "")
 	// orderByDesc := c.DefaultQuery("orderBy", "")
 	// sortbyDesc := c.DefaultQuery("sortbyDesc", "[]")
 
-	// 根据行业检索
-	industryArr := strings.Split(industry, ",")
-	dataLog.Debugf("获得的参数为industryArr: %v ", industryArr)
-	industryStr := ""
-	if industryArr[0] == "all" {
-		industryStr = ""
-	} else if len(industryArr) > 0 {
-		industryStr = "WHERE industry in ("
-		for index := 0; index < len(industryArr); index++ {
-			if index == len(industryArr)-1 {
-				industryStr = industryStr + `"` + industryArr[index] + `")`
+	// 根据类型检索
+	typeArr := strings.Split(companyType, ",")
+	typeStr := ""
+	if typeArr[0] == "all" {
+		typeStr = ""
+	} else if len(typeArr) > 0 {
+		typeStr = "WHERE type in ("
+		for index := 0; index < len(typeArr); index++ {
+			if index == len(typeArr)-1 {
+				typeStr = typeStr + `"` + typeArr[index] + `")`
 			} else {
-				industryStr = industryStr + `"` + industryArr[index] + `" ,`
+				typeStr = typeStr + `"` + typeArr[index] + `" ,`
 			}
 		}
 	}
 
+	// 根据行业检索
+	// industryArr := strings.Split(industry, ",")
+	// dataLog.Debugf("获得的参数为industryArr: %v ", industryArr)
+	// industryStr := ""
+	// if industryArr[0] == "all" {
+	// 	industryStr = ""
+	// } else if len(industryArr) > 0 {
+	// 	industryStr = "WHERE industry in ("
+	// 	for index := 0; index < len(industryArr); index++ {
+	// 		if index == len(industryArr)-1 {
+	// 			industryStr = industryStr + `"` + industryArr[index] + `")`
+	// 		} else {
+	// 			industryStr = industryStr + `"` + industryArr[index] + `" ,`
+	// 		}
+	// 	}
+	// }
+
 	// 根据关键字检索
 	keywordStr := c.DefaultQuery("keyword", "")
-	if keywordStr != "" && industryStr != "" {
+	if keywordStr != "" && typeStr != "" {
 		keywordStr = "AND name like " + `"%` + keywordStr + `%"`
-	} else if keywordStr != "" && industryStr == "" {
+	} else if keywordStr != "" && typeStr == "" {
 		keywordStr = "Where name like " + `"%` + keywordStr + `%"`
+	}
+
+	importantStr := c.DefaultQuery("important", "")
+	if importantStr != "" && typeStr != "" {
+		importantStr = "AND important = 1"
+	} else if importantStr != "" && typeStr == "" {
+		importantStr = "Where important = 1"
 	}
 
 	sorterStr := c.DefaultQuery("field", "")
@@ -146,7 +174,7 @@ func (ac *DataController) CompanyListByQuery(c *gin.Context) {
 			sorterStr += " DESC"
 		}
 	} else if sorterStr == "" && orderStr == "" {
-		sorterStr = "Order by buy_number DESC "
+		sorterStr = "Order by total DESC "
 	}
 
 	startYear := strings.Split(startDate, ",")[0]
@@ -162,24 +190,25 @@ func (ac *DataController) CompanyListByQuery(c *gin.Context) {
 			from company_monthly
 			where year = ` + startYear + ` and month = ` + startMonth + ` )as monthly
 		left join company_install on company_install.company_id = monthly.company_id ) as totalinfo
-	left join company on company.id = totalinfo.company_id
+	left join v_company_order as company on company.id = totalinfo.company_id
 	`
 
 	err := ac.DB.Raw(`
-		select company.name,company.group_id,company.industry,company.buy_number,company.service_date,totalinfo.*,
-			totalinfo.install_total/company.buy_number as install_rate , totalinfo.activity_sum /company.buy_number as user_rate
+		select company.name,company.group_id,company.type,company.industry,company.total, company.important,totalinfo.*,
+			totalinfo.install_total/company.total as install_rate , totalinfo.activity_sum /company.total as user_rate
 		` + rawSQL + `
-		` + industryStr + `
+		` + typeStr + `
 		` + keywordStr + `
+		` + importantStr + `
 		` + sorterStr + `
 		LIMIT ` + limit + ` OFFSET ` + start + `
 		`).Scan(&results).Error
 
 	if err != nil {
-		dataLog.Debugf("Error when looking up company_monthly List, the error is '%v'", err)
+		dataLog.Debugf("获得企业报活数据列表发现错误： '%v'", err)
 		res := gin.H{
 			"status": "404",
-			"error":  "No groud list found",
+			"error":  "获得企业报活数据列表发现错误",
 		}
 		c.JSON(404, res)
 		return
@@ -190,8 +219,9 @@ func (ac *DataController) CompanyListByQuery(c *gin.Context) {
 	ac.DB.Raw(`
 		SELECT count(1) as total
 		` + rawSQL + `
-		` + industryStr + `
+		` + typeStr + `
 		` + keywordStr + `
+		` + importantStr + `
 		`).Scan(&pageOption)
 
 	pageOption.PageSize = limit

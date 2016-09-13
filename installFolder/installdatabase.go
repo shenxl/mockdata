@@ -30,18 +30,26 @@ func main() {
 	logger.Println("数据库模块初始化成功")
 
 	type sourceData struct {
-		Sales        string `gorm:"sales"`
-		Sn           string `gorm:"sn"`
-		SnNumber     int    `gorm:"sales"`
-		CompanyGroup string `gorm:"sales"`
-		Company      string `gorm:"company"`
-		Region       string `gorm:"sales"`
-		Province     string `gorm:"sales"`
-		City         string `gorm:"sales"`
-		Address      string `gorm:"sales"`
-		Industry     string `gorm:"sales"`
-		ServiceYear  int
-		ServiceDate  time.Time
+		Sales              string
+		Sn                 string
+		SnType             string
+		SnArea             string
+		SnNumber           int64
+		GroupName          string
+		FinalName          string
+		CompanyName        string
+		Important          int
+		Region             string
+		Province           string
+		City               string
+		Address            string
+		CompanyType        string
+		CompanyIndustry    string
+		ServiceLength      int
+		ServiceDate        time.Time
+		AuthorizationYears int
+		AuthorizationDate  time.Time
+		Notes              string
 	}
 
 	// datas := []sourceData{}
@@ -60,70 +68,76 @@ func main() {
 				group     models.Group
 				company   models.Company
 				companySn models.CompanySn
+				order     models.Order
 			)
 			// rows.Scan(&data)
 			db.ScanRows(rows, &data)
-			//  1、获得 Company_group 并在 group表里查询，如果找到则返回 GroupID 若未找到则添加 Group 购买量 并返回 GroupID
-			if db.First(&group, "group_name = ?", data.CompanyGroup).RecordNotFound() {
-				group.GroupName = data.CompanyGroup
-				group.Industry = data.Industry
-				group.PurchaseNumber = data.SnNumber
-				group.Sales = data.Sales
-				gsaveE := db.Save(&group).Error
+			// fmt.Printf("获取data [%v]\n", data)
+			//  1、获得 Company_group 并在 group表里查询，如果找到则返回 GroupID 若未找到则添加 Group 并返回 GroupID
+			if db.First(&group, "group_name = ?", data.GroupName).RecordNotFound() {
+				group.GroupName = data.GroupName
+				group.Region = data.Region
+				group.Province = data.Province
+				group.City = data.City
+				group.Address = data.Address
+				group.Type = data.CompanyType
+				group.Industry = data.CompanyIndustry
+				group.Important = data.Important
+				gsaveE := db.Create(&group).Error
 				if gsaveE != nil {
 					logger.Printf("添加groupid[%v]失败： %v \n", group.Id, gsaveE)
 				}
-
-			} else {
-				// logger.Printf("找到重复集团[%v]：\n", group.GroupName)
-				gupdateE := db.Model(&group).Where("id = ?", group.Id).Update("purchase_number", group.PurchaseNumber+data.SnNumber).Error
-				if gupdateE != nil {
-					logger.Printf("更新groupid[%v]失败： %v \n", group.Id, gupdateE)
-				}
 			}
 
-			//  3、若未找到 则 根据 GroupID 创建 company 表,并返回 companyID
-			if db.First(&company, "name = ?", data.Company).RecordNotFound() {
-				company.Name = data.Company
-				company.BuyNumber = data.SnNumber
+			//  2、若未找到 则 根据 GroupID 创建 company 表,并返回 companyID
+			if db.First(&company, "name = ?", data.CompanyName).RecordNotFound() {
+				company.Name = data.CompanyName
 				company.GroupId = group.Id
 				company.Region = data.Region
-				company.Industry = data.Industry
+				company.Type = data.CompanyType
+				company.Industry = data.CompanyIndustry
 				company.Province = data.Province
 				company.City = data.City
 				company.Address = data.Address
-				company.LengthOfService = data.ServiceYear
-				company.ServiceDate = data.ServiceDate
-				csaveE := db.Save(&company).Error
+				company.Important = data.Important
+				csaveE := db.Create(&company).Error
 				if csaveE != nil {
 					logger.Printf("添加company[%v]失败： %v \n", company.Id, csaveE)
 				}
-			} else {
-				// logger.Printf("找到重复公司[%v]：\n", company.Name)
-				//  2、获得 company 并在 company 表里查询 ， 如果找到则返回 company ID 并更新 SnNumber = old + now ， 服务截止日期取离当前时间最远的值，服务器与服务截止日期在同一个实体上。并返回 companyId
-				if company.ServiceDate.Before(data.ServiceDate) {
-					cupdateE1 := db.Model(&company).Where("id = ?", company.Id).
-						Update(models.Company{BuyNumber: company.BuyNumber + data.SnNumber, LengthOfService: data.ServiceYear, ServiceDate: data.ServiceDate}).Error
-					if cupdateE1 != nil {
-						logger.Printf("更新company[%v]失败： %v \n", company.Id, cupdateE1)
-					}
-				} else {
-					cupdateE2 := db.Model(&company).Where("id = ?", company.Id).
-						Update(models.Company{BuyNumber: company.BuyNumber + data.SnNumber, LengthOfService: company.LengthOfService, ServiceDate: company.ServiceDate}).Error
-					if cupdateE2 != nil {
-						logger.Printf("更新company[%v]失败： %v \n", company.Id, cupdateE2)
-					}
-				}
 			}
+
+			//	3.根据 company_id 新建订单记录
+			order.CompanyId = company.Id
+			order.GroupId = group.Id
+			order.Sales = data.Sales
+			order.Sns = data.Sn
+			order.OrderType = data.SnType
+			order.OrderArea = data.SnArea
+			order.OrderName = data.FinalName
+			order.OrderNumber = data.SnNumber
+			order.AuthorizationDate = data.AuthorizationDate
+			order.AuthorizationYears = data.AuthorizationYears
+			order.LengthOfService = data.ServiceLength
+			order.ServiceDate = data.ServiceDate
+			osaveE := db.Create(&order).Error
+			if osaveE != nil {
+				logger.Printf("添加order[%v]失败： %v \n", company.Id, osaveE)
+			}
+
 			//  4、对 sn 分列 ,将分列后的每一条插入 company_sn 表
 			sns := strings.Split(data.Sn, ",")
-			// logger.Printf("需要向：公司%v 加入[%v]个序列号\n", company.Name, len(sns))
 			for _, sn := range sns {
-				companySn.CompanyId = company.Id
-				companySn.Sn = sn
-				snsaveE := db.Save(&companySn).Error
-				if snsaveE != nil {
-					logger.Printf("添加company_sn[%v]失败： %v\n", companySn.Id, snsaveE)
+				companySn = models.CompanySn{}
+				if sn != "SERIALCODE_YJ" {
+					if db.Where("company_id = ? AND sn = ?", company.Id, sn).Find(&companySn).RecordNotFound() {
+						fmt.Printf("向：公司%v 加入序列号[%v]\n", company.Name, sn)
+						companySn.CompanyId = company.Id
+						companySn.Sn = sn
+						snsaveE := db.Create(&companySn).Error
+						if snsaveE != nil {
+							logger.Printf("添加company_sn[%v]失败： %v\n", companySn.Id, snsaveE)
+						}
+					}
 				}
 			}
 		}

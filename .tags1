@@ -4,8 +4,18 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
-dataLog	E:\coding\go\src\github.com\shenxl\mockdata\controllers\datacontrol.go	/^var dataLog = logging.MustGetLogger("DataControl")$/;"	var	line:10
-DataController	E:\coding\go\src\github.com\shenxl\mockdata\controllers\datacontrol.go	/^type DataController struct {$/;"	type	line:12
-SetDB	E:\coding\go\src\github.com\shenxl\mockdata\controllers\datacontrol.go	/^func (ac *DataController) SetDB(d *gorm.DB) {$/;"	func	line:16
-MapData	E:\coding\go\src\github.com\shenxl\mockdata\controllers\datacontrol.go	/^func (ac *DataController) MapData(c *gin.Context) {$/;"	func	line:21
-MapResult	E:\coding\go\src\github.com\shenxl\mockdata\controllers\datacontrol.go	/^	type MapResult struct {$/;"	type	line:23
+chartLog	E:\coding\go\src\github.com\shenxl\mockdata\controllers\chart.go	/^var chartLog = logging.MustGetLogger("ChartControl")$/;"	var	line:15
+ChartController	E:\coding\go\src\github.com\shenxl\mockdata\controllers\chart.go	/^type ChartController struct {$/;"	type	line:17
+SetDB	E:\coding\go\src\github.com\shenxl\mockdata\controllers\chart.go	/^func (ac *ChartController) SetDB(d *gorm.DB) {$/;"	func	line:21
+InstallForLine	E:\coding\go\src\github.com\shenxl\mockdata\controllers\chart.go	/^func (ac *ChartController) InstallForLine(c *gin.Context) {$/;"	func	line:26
+resultData	E:\coding\go\src\github.com\shenxl\mockdata\controllers\chart.go	/^	type resultData struct {$/;"	type	line:27
+InstallForLineByID	E:\coding\go\src\github.com\shenxl\mockdata\controllers\chart.go	/^func (ac *ChartController) InstallForLineByID(c *gin.Context) {$/;"	func	line:70
+resultData	E:\coding\go\src\github.com\shenxl\mockdata\controllers\chart.go	/^	type resultData struct {$/;"	type	line:71
+InstallForIndustry	E:\coding\go\src\github.com\shenxl\mockdata\controllers\chart.go	/^func (ac *ChartController) InstallForIndustry(c *gin.Context) {$/;"	func	line:107
+ResultData	E:\coding\go\src\github.com\shenxl\mockdata\controllers\chart.go	/^	type ResultData struct {$/;"	type	line:108
+SummaryForMonth	E:\coding\go\src\github.com\shenxl\mockdata\controllers\chart.go	/^func (ac *ChartController) SummaryForMonth(c *gin.Context) {$/;"	func	line:141
+nowData	E:\coding\go\src\github.com\shenxl\mockdata\controllers\chart.go	/^	type nowData struct {$/;"	type	line:142
+BuyForIndustry	E:\coding\go\src\github.com\shenxl\mockdata\controllers\chart.go	/^func (ac *ChartController) BuyForIndustry(c *gin.Context) {$/;"	func	line:197
+ResultData	E:\coding\go\src\github.com\shenxl\mockdata\controllers\chart.go	/^	type ResultData struct {$/;"	type	line:198
+MapData	E:\coding\go\src\github.com\shenxl\mockdata\controllers\chart.go	/^func (ac *ChartController) MapData(c *gin.Context) {$/;"	func	line:230
+MapResult	E:\coding\go\src\github.com\shenxl\mockdata\controllers\chart.go	/^	type MapResult struct {$/;"	type	line:232

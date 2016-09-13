@@ -47,9 +47,6 @@ func main() {
 	companyinstallCtl := controllers.CompanyInstallController{}
 	companyinstallCtl.SetDB(dc.GetDB())
 
-	installCtl := controllers.InstallController{}
-	installCtl.SetDB(dc.GetDB())
-
 	dataCtl := controllers.DataController{}
 	dataCtl.SetDB(dc.GetDB())
 
@@ -69,18 +66,15 @@ func main() {
 		report.GET("/linedata/:id", chartCtl.InstallForLineByID)
 	}
 
-	data := router.Group("/api")
+	data := router.Group("/api/companys")
 	{
-		data.GET("/companys/", dataCtl.CompanyListByQuery)
-		data.GET("/groupDaily/:id", dataCtl.GroupDaily)
+		data.GET("/", dataCtl.CompanyListByQuery)
+		data.GET("/daily/:id", dataCtl.CompanyDaily)
+		data.GET("/types/", companyCtl.GetType)
 		// groups.GET("/group_:gid/companies", companymonthCtl.GroupByQuery)
 		// groups.GET("/group_:gid/companies/company_:cid/sns", companymonthCtl.GroupByQuery)
 	}
 
-	install := router.Group("/install")
-	{
-		install.GET("/", installCtl.Install)
-	}
 	// Get a todolist resource
 	industry := router.Group("/api/industry")
 	{
@@ -90,6 +84,7 @@ func main() {
 	company := router.Group("/companys")
 	{
 		company.GET("/", companyCtl.List)
+		//company.GET("/types", companyCtl.GetType)
 		company.GET("/industries/:name", companyCtl.GetListByIndustry)
 		company.POST("/", companyCtl.Create)
 		company.GET("/company/:id", companyCtl.GetCompany)

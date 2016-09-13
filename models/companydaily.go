@@ -1,6 +1,6 @@
 package models
 
-// 描述企业日报活 信息
+// CompanyDaily 描述企业日报活 信息
 type CompanyDaily struct {
 	//  Id值为主键
 	Id          int64 `json:"id"`
@@ -13,7 +13,7 @@ type CompanyDaily struct {
 	InstallSum  int64 `json:"install_sum"`
 }
 
-// 设置表名 company_daily
+// TableName 设置表名 company_daily
 func (CompanyDaily) TableName() string {
 	return "company_daily"
 }

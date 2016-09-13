@@ -152,6 +152,36 @@ func (ac *CompanyController) GetIndustry(c *gin.Context) {
 	c.JSON(200, content)
 }
 
+func (ac *CompanyController) GetType(c *gin.Context) {
+	type TypeData struct {
+		Type string `json:"type"`
+	}
+
+	results := []TypeData{}
+	err := ac.DB.Table("company").
+		Select("type").
+		Group("type").
+		Scan(&results).Error
+
+	if err != nil {
+		logcompany.Debugf("获取企业类型失败：异常信息 '%v'", err)
+		res := gin.H{
+			"status": "404",
+			"error":  "获取企业类型失败",
+		}
+		c.JSON(404, res)
+		return
+	}
+	content := gin.H{
+		"status":  "200",
+		"success": true,
+		"types":   results,
+	}
+
+	c.Writer.Header().Set("Content-Type", "application/json")
+	c.JSON(200, content)
+}
+
 func (ac *CompanyController) Update(c *gin.Context) {
 	// Grab id
 	id := c.Params.ByName("id")
