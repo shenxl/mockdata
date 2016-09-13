@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 	"time"
+	"wpsupdate-statistic/config"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/shenxl/mockdata/controllers"
@@ -19,11 +20,18 @@ func main() {
 		fmt.Printf("%s\r\n", err.Error())
 		os.Exit(-1)
 	}
+
+	err = config.Initialize("./wpsupdate-statistic.conf")
+	if err != nil {
+		fmt.Printf("配置信息初始化失败!\n%v", err.Error())
+		return
+	}
+
 	defer logfile.Close()
 	logger := log.New(logfile, "\r\n", log.Ldate|log.Ltime|log.Llongfile)
 	logger.Println("数据库模块初始化..")
 	dc := controllers.DBController{}
-	dc.InitDB()
+	dc.InitDB(config.App.Mysql.Addr, config.App.Mysql.ShowLog)
 	dc.InitSchema()
 	db := dc.GetDB()
 	db.LogMode(false)

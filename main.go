@@ -1,8 +1,11 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/shenxl/mockdata/config"
 	"github.com/shenxl/mockdata/controllers"
 )
 
@@ -22,10 +25,15 @@ func CORSMiddleware() gin.HandlerFunc {
 }
 
 func main() {
+	err := config.Initialize("./wpsupdate-api.conf")
+	if err != nil {
+		fmt.Printf("配置信息初始化失败!\n%v", err.Error())
+		return
+	}
 
 	// Get DBController
 	dc := controllers.DBController{}
-	dc.InitDB()
+	dc.InitDB(config.App.Mysql.Addr, config.App.Mysql.ShowLog)
 	dc.InitSchema()
 
 	// Get a TodolistController instance
@@ -53,6 +61,9 @@ func main() {
 	chartCtl := controllers.ChartController{}
 	chartCtl.SetDB(dc.GetDB())
 
+	activeData := controllers.ActiveDataController{}
+	activeData.SetDB(dc.GetDB())
+
 	router := gin.New()
 	router.Use(CORSMiddleware())
 
@@ -68,9 +79,10 @@ func main() {
 
 	data := router.Group("/api/companys")
 	{
-		data.GET("/", dataCtl.CompanyListByQuery)
+		data.GET("/", activeData.GetActiveDataByCompanys)
 		data.GET("/daily/:id", dataCtl.CompanyDaily)
 		data.GET("/types/", companyCtl.GetType)
+		// data.GET("/test", activeData.GetActiveDataByCompanys)
 		// groups.GET("/group_:gid/companies", companymonthCtl.GroupByQuery)
 		// groups.GET("/group_:gid/companies/company_:cid/sns", companymonthCtl.GroupByQuery)
 	}

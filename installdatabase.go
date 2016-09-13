@@ -8,7 +8,8 @@ import (
 
 func main() {
 	dc := controllers.DBController{}
-	dc.InitDB()
+	dc.InitDB(
+		
 	dc.InitSchema()
 	results := []models.Company{}
 	err := dc.GetDB().Find(&results).Error

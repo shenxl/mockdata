@@ -4,8 +4,6 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
-DBController	E:\coding\go\src\github.com\shenxl\mockdata\controllers\db.go	/^type DBController struct {$/;"	type	line:11
-InitDB	E:\coding\go\src\github.com\shenxl\mockdata\controllers\db.go	/^func (dc *DBController) InitDB() {$/;"	func	line:15
-err	E:\coding\go\src\github.com\shenxl\mockdata\controllers\db.go	/^	var err error$/;"	var	line:16
-GetDB	E:\coding\go\src\github.com\shenxl\mockdata\controllers\db.go	/^func (dc *DBController) GetDB() *gorm.DB {$/;"	func	line:26
-InitSchema	E:\coding\go\src\github.com\shenxl\mockdata\controllers\db.go	/^func (dc *DBController) InitSchema() {$/;"	func	line:30
+AppConfig	E:\coding\go\src\github.com\shenxl\mockdata\config\config.go	/^type AppConfig struct {$/;"	type	line:10
+App	E:\coding\go\src\github.com\shenxl\mockdata\config\config.go	/^var App AppConfig$/;"	var	line:22
+Initialize	E:\coding\go\src\github.com\shenxl\mockdata\config\config.go	/^func Initialize(file string) error {$/;"	func	line:24
